@@ -40,7 +40,7 @@ namespace Plant_Hub_Core.Managers.Categories
                     };
 
                 }
-                string folder = "/Uploads/CategoryImages/";
+                string folder = "/Uploads/CategoryImage/";
                 string imageURL = UploadImage(folder, category.ImageFile);
                 var newCategory = new Category
                 {
@@ -126,7 +126,7 @@ namespace Plant_Hub_Core.Managers.Categories
                 };
             }
 
-            string folder = "Uploads/CategoryImages/";
+            string folder = "Uploads/CategoryImage/";
             string imageURL = UploadImage(folder, category.ImageFile);
 
             existCategory.CategoryName = category.CategoryName;

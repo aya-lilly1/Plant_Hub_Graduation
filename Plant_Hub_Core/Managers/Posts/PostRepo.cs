@@ -26,7 +26,7 @@ namespace Plant_Hub_Core.Managers.Posts
         #region Public
             public ResponseApi CreatePost(string userId, PostMV post)
             {
-                string folder = "Uploads/UserImage/";
+                string folder = "Uploads/PostImage/";
                 string imageURL = UploadImage(folder, post.ImageFile);
                 var newPost = new Post()
                       {
@@ -175,7 +175,7 @@ namespace Plant_Hub_Core.Managers.Posts
                         Data = null
                     };
                 }
-                string folder = "Uploads/UserImage/";
+                string folder = "Uploads/PostImage/";
                 string imageURL = UploadImage(folder, post.ImageFile);
                 existPost.Title = post.Title;
                 existPost.Content = post.Content;

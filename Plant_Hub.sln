@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plant_Hub", "Plant_Hub\Plant_Hub.csproj", "{50137A33-B503-44FA-A2A6-54E1D1A81A6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plant_Hub", "Plant_Hub\Plant_Hub.csproj", "{50137A33-B503-44FA-A2A6-54E1D1A81A6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plant_Hub_Models", "ClassLibrary1\Plant_Hub_Models.csproj", "{D9947B78-760C-4653-8BFC-09A5CB6222C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plant_Hub_Models", "ClassLibrary1\Plant_Hub_Models.csproj", "{D9947B78-760C-4653-8BFC-09A5CB6222C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plant_Hub_ModelView", "Plant_Hub_ModelView\Plant_Hub_ModelView.csproj", "{02A94C40-9388-4250-B1CC-737EA0F0D9A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plant_Hub_ModelView", "Plant_Hub_ModelView\Plant_Hub_ModelView.csproj", "{02A94C40-9388-4250-B1CC-737EA0F0D9A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plant_Hub_Core", "Plant_Hub_Core\Plant_Hub_Core.csproj", "{A655017F-3DAD-41BD-9799-F27ED454EC39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plant_Hub_Core", "Plant_Hub_Core\Plant_Hub_Core.csproj", "{A655017F-3DAD-41BD-9799-F27ED454EC39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

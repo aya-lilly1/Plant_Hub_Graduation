@@ -42,7 +42,7 @@ namespace Plant_Hub_Core.Managers.Plants
                     };
 
                 }
-                string folder = "Uploads/UserImage/";
+                string folder = "Uploads/PlantImage/";
                 string imageURL = UploadImage(folder, plant.ImageFile);
                 var newPlant = new Plant
                 {
@@ -186,7 +186,7 @@ namespace Plant_Hub_Core.Managers.Plants
                     };
                 }
 
-                string folder = "Uploads/UserImage/";
+                string folder = "Uploads/PlantImage/";
                 string imageURL = UploadImage(folder, plant.ImageFile);
 
                 existPlant.PlantName = plant.PlantName;
