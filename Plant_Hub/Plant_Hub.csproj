@@ -31,14 +31,4 @@
     <ProjectReference Include="..\Plant_Hub_Core\Plant_Hub_Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\Identity\css\" />
-    <Folder Include="wwwroot\Identity\js\" />
-    <Folder Include="wwwroot\Uploads\CategoryImage\" />
-    <Folder Include="wwwroot\Uploads\as\" />
-    <Folder Include="wwwroot\Uploads\PostImage\" />
-    <Folder Include="wwwroot\Uploads\PlantImage\" />
-    <Folder Include="wwwroot\Uploads\UserImage\" />
-  </ItemGroup>
-
 </Project>
