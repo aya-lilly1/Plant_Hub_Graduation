@@ -16,8 +16,10 @@ namespace Plant_Hub_Core.Mapper
             CreateMap<SignupUser, ApplicationUser>().ReverseMap();
             CreateMap<LoginModelView, ApplicationUser>().ReverseMap();
             CreateMap<ApplicationUser, LoginResponse>().ReverseMap();
-
-
+            CreateMap<CategoryResMV, Category>().ReverseMap();
+            CreateMap<CategoryMV, Category>().ReverseMap();
+            CreateMap<PlantMV, Plant>().ReverseMap();
+            CreateMap<PlantResMV, Plant>().ReverseMap();
         }
     }
 }

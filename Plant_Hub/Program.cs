@@ -9,6 +9,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Plant_Hub_Core.Managers.Categories;
+using Plant_Hub_Core.Managers.Plants;
+using Microsoft.Extensions.Configuration;
+using Plant_Hub_ModelView;
+using Plant_Hub_Core.Managers.Posts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +27,18 @@ builder.Services.AddSingleton(mapper);
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 builder.Services.AddDbContext<Plant_Hub_dbContext>(options =>
     options.UseSqlServer(connectionString));
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularOrigins",
+    builder =>
+    {
+        builder.WithOrigins(
+                            "http://localhost:4200"
+                            )
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+    });
+});
 
 
 builder.Services.AddControllers();
@@ -51,9 +67,16 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
 
 builder.Services.AddScoped<IAccount, Account>();
+builder.Services.AddScoped<ICatregory, CategoryRepo>();
+builder.Services.AddScoped<IPlant, PlantRepo>();
+builder.Services.AddScoped<IPost, PostRepo>();
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -93,11 +116,12 @@ var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI();
 //}
-
+app.UseCors("AllowAngularOrigins");
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles();
 
 app.MapControllers();
 

@@ -10,6 +10,11 @@ namespace Plant_Hub_Core.Managers.Account
     public interface IAccount
     {
         Task<ResponseApi> SignUp(SignupUser user);
-         Task<ResponseApi> SignIn(LoginModelView user);
+        Task<ResponseApi> SignIn(LoginModelView user);
+        ResponseApi ResetPassword(string email, ResetPasswordMV resetPasswordMV);
+        ResponseApi ConfirmationCode(int confirmationCode, string email);
+        ResponseApi ConfirmCodeResetPassword(string email, int code);
+        Task<ResponseApi> SendEmailToResetPassword(string email);
+        
     }
 }

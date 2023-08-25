@@ -8,8 +8,8 @@
 
   <ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
-	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.16" />
-	  <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.16" />
+	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.21" />
+	  <!--<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.16" />-->
 	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.16" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.16">
 		  <PrivateAssets>all</PrivateAssets>
@@ -23,7 +23,7 @@
 	  <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
 	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
   
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+   
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +32,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\Identity\css\" />
+    <Folder Include="wwwroot\Identity\js\" />
+    <Folder Include="wwwroot\Uploads\CategoryImage\" />
+    <Folder Include="wwwroot\Uploads\as\" />
+    <Folder Include="wwwroot\Uploads\PostImage\" />
+    <Folder Include="wwwroot\Uploads\PlantImage\" />
     <Folder Include="wwwroot\Uploads\UserImage\" />
   </ItemGroup>
 
