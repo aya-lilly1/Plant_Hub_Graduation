@@ -214,9 +214,9 @@ namespace Plant_Hub_Core.Managers.Posts
             }
 
             //comment
-            public ResponseApi AddComment(string userId, int postId,CommentMV comment)
+            public ResponseApi AddComment(string userId,CommentMV comment)
             {
-                var existPost = _dbContext.Posts.Find(postId);
+                var existPost = _dbContext.Posts.Find(comment.PostId);
                 if (existPost == null)
                 {
                     return new ResponseApi
@@ -226,12 +226,12 @@ namespace Plant_Hub_Core.Managers.Posts
                         Data = null
                     };
                 }
-                var newComment = new Comment()
+                var newComment = new Plant_Hub_Models.Models.Comment()
                 {
                     Content = comment.Content,
                     CreatedDate = DateTime.Now,
                     UserId = userId,
-                    PostId = postId
+                    PostId = comment.PostId,
                 };
                 _dbContext.Comments.Add(newComment);
                 _dbContext.SaveChanges();
@@ -292,14 +292,30 @@ namespace Plant_Hub_Core.Managers.Posts
         #endregion Public 
 
         #region private
-        private string UploadImage(string folder, IFormFile ImgeFile)
+        private string UploadImage(string folder, IFormFile imageFile)
+        {
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+            string serverFolderPath = Path.Combine(_host.WebRootPath, folder);
+            string serverFilePath = Path.Combine(serverFolderPath, uniqueFileName);
+
+            Directory.CreateDirectory(serverFolderPath);
+
+            using (var fileStream = new FileStream(serverFilePath, FileMode.Create))
             {
-                folder += Guid.NewGuid().ToString() + "_" + ImgeFile.FileName;
-                string ImageURL = "/" + folder;
-                string serverFolder = Path.Combine(_host.WebRootPath, folder);
-                ImgeFile.CopyTo(new FileStream(serverFolder, FileMode.Create));
-                return ImageURL;
+                imageFile.CopyTo(fileStream);
             }
+
+            string imageURL = "/" + Path.Combine(folder, uniqueFileName).Replace("\\", "/");
+            return imageURL;
+        }
+        //private string UploadImage(string folder, IFormFile ImgeFile)
+        //    {
+        //        folder += Guid.NewGuid().ToString() + "_" + ImgeFile.FileName;
+        //        string ImageURL = "/" + folder;
+        //        string serverFolder = Path.Combine(_host.WebRootPath, folder);
+        //        ImgeFile.CopyTo(new FileStream(serverFolder, FileMode.Create));
+        //        return ImageURL;
+        //    }
         #endregion private
     }
 }

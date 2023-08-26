@@ -168,15 +168,35 @@ namespace Plant_Hub_Core.Managers.Categories
         #endregion Public 
 
         #region private
-        private string UploadImage(string folder, IFormFile ImgeFile)
+
+
+
+        private string UploadImage(string folder, IFormFile imageFile)
         {
-            folder += Guid.NewGuid().ToString() + "_" + ImgeFile.FileName;
-            string ImageURL = "/" + folder;
-            string serverFolder = Path.Combine(_host.WebRootPath, folder);
-            Directory.CreateDirectory(serverFolder);
-            ImgeFile.CopyTo(new FileStream(serverFolder, FileMode.Create));
-            return ImageURL;
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+            string serverFolderPath = Path.Combine(_host.WebRootPath, folder);
+            string serverFilePath = Path.Combine(serverFolderPath, uniqueFileName);
+
+            Directory.CreateDirectory(serverFolderPath);
+
+            using (var fileStream = new FileStream(serverFilePath, FileMode.Create))
+            {
+                imageFile.CopyTo(fileStream);
+            }
+
+            string imageURL = "/" + Path.Combine(folder, uniqueFileName).Replace("\\", "/");
+            return imageURL;
         }
+
+        //private string UploadImage(string folder, IFormFile ImgeFile)
+        //{
+        //    folder += Guid.NewGuid().ToString() + "_" + ImgeFile.FileName;
+        //    string ImageURL = "/" + folder;
+        //    string serverFolder = Path.Combine(_host.WebRootPath, folder);
+        //    Directory.CreateDirectory(serverFolder);
+        //    ImgeFile.CopyTo(new FileStream(serverFolder, FileMode.Create));
+        //    return ImageURL;
+        //}
 
         #endregion private
     }

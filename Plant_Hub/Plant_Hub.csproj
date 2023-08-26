@@ -27,12 +27,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\Plant_Hub_Models.csproj" />
     <ProjectReference Include="..\Plant_Hub_Core\Plant_Hub_Core.csproj" />
+    <ProjectReference Include="..\Plant_Hub_Models\Plant_Hub_Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\Uploads\CategoryImage\" />
+    <Folder Include="wwwroot\Uploads\CategoryImagess\" />
     <Folder Include="wwwroot\Uploads\PlantImage\" />
     <Folder Include="wwwroot\Uploads\PostImage\" />
     <Folder Include="wwwroot\Uploads\UserImage\" />

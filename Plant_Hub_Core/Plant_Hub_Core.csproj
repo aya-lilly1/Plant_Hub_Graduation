@@ -19,7 +19,7 @@
 
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\ClassLibrary1\Plant_Hub_Models.csproj" />
+	  <ProjectReference Include="..\Plant_Hub_Models\Plant_Hub_Models.csproj" />
 	  <ProjectReference Include="..\Plant_Hub_ModelView\Plant_Hub_ModelView.csproj" />
 	</ItemGroup>
 

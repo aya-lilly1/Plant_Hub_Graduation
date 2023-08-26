@@ -71,9 +71,9 @@ namespace Plant_Hub.Controllers
 
         [Route("api/Post/AddComment")]
         [HttpPost]
-        public IActionResult AddComment(int postid,CommentMV comment)
+        public IActionResult AddComment(CommentMV comment)
         {
-            var res = _post.AddComment(_UserId, postid,comment);
+            var res = _post.AddComment(_UserId,comment);
             return Ok(res);
         }
         [Route("api/Post/AddLike")]

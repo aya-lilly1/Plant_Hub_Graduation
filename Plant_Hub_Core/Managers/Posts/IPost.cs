@@ -16,7 +16,7 @@ namespace Plant_Hub_Core.Managers.Posts
         ResponseApi UpdatePostById(int postId, PostMV post);
         ResponseApi DeletePostById(int PostId);
 
-        ResponseApi AddComment(string userId, int postId, CommentMV comment);
+        ResponseApi AddComment(string userId, CommentMV comment);
         ResponseApi LikePostByUsre(string userId, int PostId);
         ResponseApi Deletelike(string userId, int PostId);
 

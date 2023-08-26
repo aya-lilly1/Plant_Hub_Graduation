@@ -422,17 +422,32 @@ namespace Plant_Hub_Core.Managers.Account
                 return confirmationCode;
             }
 
-            private string UploadImage(string folder, IFormFile ImgeFile)
-            {
-                folder += Guid.NewGuid().ToString() + "_" + ImgeFile.FileName;
-                string ImageURL = "/" + folder;
-                string serverFolder = Path.Combine(_host.WebRootPath, folder);
-                ImgeFile.CopyTo(new FileStream(serverFolder, FileMode.Create));
-                return ImageURL;
-            }
-        
+        //private string UploadImage(string folder, IFormFile ImgeFile)
+        //{
+        //    folder += Guid.NewGuid().ToString() + "_" + ImgeFile.FileName;
+        //    string ImageURL = "/" + folder;
+        //    string serverFolder = Path.Combine(_host.WebRootPath, folder);
+        //    ImgeFile.CopyTo(new FileStream(serverFolder, FileMode.Create));
+        //    return ImageURL;
+        //}
 
-            private static string HashPassword(string password)
+        private string UploadImage(string folder, IFormFile imageFile)
+        {
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+            string serverFolderPath = Path.Combine(_host.WebRootPath, folder);
+            string serverFilePath = Path.Combine(serverFolderPath, uniqueFileName);
+
+            Directory.CreateDirectory(serverFolderPath);
+
+            using (var fileStream = new FileStream(serverFilePath, FileMode.Create))
+            {
+                imageFile.CopyTo(fileStream);
+            }
+
+            string imageURL = "/" + Path.Combine(folder, uniqueFileName).Replace("\\", "/");
+            return imageURL;
+        }
+        private static string HashPassword(string password)
             {
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
