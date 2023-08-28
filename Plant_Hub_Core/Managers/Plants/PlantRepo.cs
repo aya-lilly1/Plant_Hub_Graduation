@@ -29,7 +29,7 @@ namespace Plant_Hub_Core.Managers.Plants
 
         #region Public
 
-            public ResponseApi CreatePlant(PlantMV plant)
+            public ResponseApi CreatePlant(CreatePlantMV plant)
             {
                 var existPlant = _dbContext.Plants.FirstOrDefault(x => x.PlantName == plant.PlantName);
                 if (existPlant != null)
@@ -162,9 +162,9 @@ namespace Plant_Hub_Core.Managers.Plants
             }
 
 
-            public ResponseApi UpdatePlantById(int plantId, PlantMV plant)
+            public ResponseApi UpdatePlantById( PlantMV plant)
             {
-                var existPlant= _dbContext.Plants.Find(plantId);
+                var existPlant= _dbContext.Plants.Find(plant.PlantId);
                 if (existPlant == null)
                 {
                     return new ResponseApi
@@ -221,7 +221,8 @@ namespace Plant_Hub_Core.Managers.Plants
                     };
                 }
                 _dbContext.Plants.Remove(existPlant);
-                return new ResponseApi
+                _dbContext.SaveChanges();
+            return new ResponseApi
                 {
                     IsSuccess = true,
                     Message = "successfully",
@@ -293,7 +294,8 @@ namespace Plant_Hub_Core.Managers.Plants
                     };
                 }
                 _dbContext.SavePlants.Remove(existPlant);
-                return new ResponseApi
+            _dbContext.SaveChanges();
+            return new ResponseApi
                 {
                     IsSuccess = true,
                     Message = "Successfully",
@@ -314,7 +316,8 @@ namespace Plant_Hub_Core.Managers.Plants
                 }
                 var plant = _dbContext.SavePlants.Find(existPlant.Id);
                 _dbContext.SavePlants.Remove(plant);
-                return new ResponseApi
+            _dbContext.SaveChanges();
+            return new ResponseApi
                 {
                     IsSuccess = true,
                     Message = "Successfully",

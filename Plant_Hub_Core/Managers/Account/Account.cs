@@ -276,15 +276,15 @@ namespace Plant_Hub_Core.Managers.Account
 
             }
 
-            public ResponseApi ResetPassword(string email, ResetPasswordMV resetPasswordMV)
+            public ResponseApi ResetPassword( ResetPasswordMV resetPasswordMV)
             {
-                var user = _dbContext.Users.FirstOrDefault(x => x.Email == email);
+                var user = _dbContext.Users.FirstOrDefault(x => x.Email == resetPasswordMV.email);
                 if (user == null)
                 {
                     var response = new ResponseApi
                     {
                         IsSuccess = false,
-                        Message = "Invalid Email",
+                        Message = " Email is not exist",
                         Data = null
                     };
                     return response;

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Plant_Hub_Core.Helper;
 using Plant_Hub_Models.Models;
 using Plant_Hub_ModelView;
 using System;
@@ -16,18 +17,19 @@ namespace Plant_Hub_Core.Managers.Categories
     {
         private Plant_Hub_dbContext _dbContext;
         private IMapper _mapper;
-        private IWebHostEnvironment _host;
+        //private IWebHostEnvironment _host;
+        private readonly IFileManagement _fileManagement;
 
-        public CategoryRepo(Plant_Hub_dbContext dbContext, IMapper mapper, IWebHostEnvironment host)
+        public CategoryRepo(Plant_Hub_dbContext dbContext, IMapper mapper, IFileManagement fileManagement)
         {
             _dbContext = dbContext;
             _mapper = mapper;
-            _host = host;
+            _fileManagement = fileManagement;
         }
 
         #region Public
 
-            public ResponseApi CreateCategoty(CategoryMV category)
+            public async Task<ResponseApi> CreateCategoty(CreateCategoryMV category)
             {
                 var existCat = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName);
                 if (existCat != null)
@@ -40,9 +42,12 @@ namespace Plant_Hub_Core.Managers.Categories
                     };
 
                 }
-                string folder = "/Uploads/CategoryImage/";
-                string imageURL = UploadImage(folder, category.ImageFile);
-                var newCategory = new Category
+            //    string folder = "/Uploads/CategoryImage/";
+            //string imageURL = UploadImage(folder, category.ImageFile);
+
+            string imageURL = await _fileManagement.Upload(category.ImageFile, "Uploads", "Images");
+
+            var newCategory = new Category
                 {
                     CategoryName = category.CategoryName,
                     Description = category.Description,
@@ -102,45 +107,45 @@ namespace Plant_Hub_Core.Managers.Categories
                     Data = category
                 };
             }
-            public ResponseApi UpdateCategoryById(int categortId, CategoryMV category)
-        {
-            var existCategory = _dbContext.Categories.Find(categortId);
-            if (existCategory == null)
+            public ResponseApi UpdateCategoryById( CategoryMV category)
             {
+                var existCategory = _dbContext.Categories.Find(category.CategoryId);
+                if (existCategory == null)
+                {
+                    return new ResponseApi
+                    {
+                        IsSuccess = false,
+                        Message = "No data available",
+                        Data = null
+                    };
+
+                }
+                var CheackCatName = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName);
+                if (CheackCatName != null)
+                {
+                    return new ResponseApi
+                    {
+                        IsSuccess = false,
+                        Message = "Category name already exists",
+                        Data = null
+                    };
+                }
+
+                string imageURL = "Uploads/CategoryImage/";
+                //string imageURL = UploadImage(folder, category.ImageFile);
+
+                existCategory.CategoryName = category.CategoryName;
+                existCategory.Description = category.Description;
+                existCategory.Image = imageURL;
+
+                _dbContext.SaveChanges();
+
                 return new ResponseApi
                 {
-                    IsSuccess = false,
-                    Message = "No data available",
-                    Data = null
+                    IsSuccess = true,
+                    Message = "successfully",
+                    Data = existCategory
                 };
-
-            }
-            var CheackCatName = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName);
-            if (CheackCatName != null)
-            {
-                return new ResponseApi
-                {
-                    IsSuccess = false,
-                    Message = "Category name already exists",
-                    Data = null
-                };
-            }
-
-            string folder = "Uploads/CategoryImage/";
-            string imageURL = UploadImage(folder, category.ImageFile);
-
-            existCategory.CategoryName = category.CategoryName;
-            existCategory.Description = category.Description;
-            existCategory.Image = imageURL;
-
-            _dbContext.SaveChanges();
-
-            return new ResponseApi
-            {
-                IsSuccess = true,
-                Message = "successfully",
-                Data = existCategory
-            };
 
             }
 
@@ -157,7 +162,8 @@ namespace Plant_Hub_Core.Managers.Categories
                     };
                 }
                 _dbContext.Categories.Remove(existCategory);
-                return new ResponseApi
+                _dbContext.SaveChanges();
+            return new ResponseApi
                 {
                     IsSuccess = true,
                     Message = "successfully",
@@ -171,22 +177,22 @@ namespace Plant_Hub_Core.Managers.Categories
 
 
 
-        private string UploadImage(string folder, IFormFile imageFile)
-        {
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
-            string serverFolderPath = Path.Combine(_host.WebRootPath, folder);
-            string serverFilePath = Path.Combine(serverFolderPath, uniqueFileName);
+        //private string UploadImage(string folder, IFormFile imageFile)
+        //{
+        //    string uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+        //    string serverFolderPath = Path.Combine(_host.WebRootPath, folder);
+        //    string serverFilePath = Path.Combine(serverFolderPath, uniqueFileName);
 
-            Directory.CreateDirectory(serverFolderPath);
+        //    Directory.CreateDirectory(serverFolderPath);
 
-            using (var fileStream = new FileStream(serverFilePath, FileMode.Create))
-            {
-                imageFile.CopyTo(fileStream);
-            }
+        //    using (var fileStream = new FileStream(serverFilePath, FileMode.Create))
+        //    {
+        //        imageFile.CopyTo(fileStream);
+        //    }
 
-            string imageURL = "/" + Path.Combine(folder, uniqueFileName).Replace("\\", "/");
-            return imageURL;
-        }
+        //    string imageURL = "/" + Path.Combine(folder, uniqueFileName).Replace("\\", "/");
+        //    return imageURL;
+        //}
 
         //private string UploadImage(string folder, IFormFile ImgeFile)
         //{

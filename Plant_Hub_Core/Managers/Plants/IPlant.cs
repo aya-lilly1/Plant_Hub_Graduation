@@ -9,11 +9,11 @@ namespace Plant_Hub_Core.Managers.Plants
 {
     public interface IPlant
     {
-        ResponseApi CreatePlant(PlantMV plant);
+        ResponseApi CreatePlant(CreatePlantMV plant);
         ResponseApi GetAllPlants(string userId);
         ResponseApi GetPlantById(int plantId);
         ResponseApi GetPlantByCategoryId(int categoryId);
-        ResponseApi UpdatePlantById(int plantId, PlantMV plant);
+        ResponseApi UpdatePlantById( PlantMV plant);
         ResponseApi DeletePlantById(int plantId);
         ResponseApi SavePlant(string userId, int plantId);
         ResponseApi GetPreservedPlants(string userId);

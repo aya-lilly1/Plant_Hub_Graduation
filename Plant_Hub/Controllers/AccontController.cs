@@ -34,39 +34,39 @@ namespace Plant_Hub.Controllers
             return Ok(result);
         }
 
-        
+        [AllowAnonymous]
         [Route("api/account/ConfirmationEmail")]
         [HttpPost]
-        public IActionResult ConfirmationEmail( int confirmationCode, string email)
+        public IActionResult ConfirmationEmail(ConfirmCodeResetPasswordMV confirmMV)
         {
-            var result = _account.ConfirmationCode(confirmationCode, email);
+            var result = _account.ConfirmationCode(confirmMV.code, confirmMV.Email);
             return Ok(result);
         }
 
         [AllowAnonymous]
         [Route("api/account/SendEmailToResetPassword")]
         [HttpPost]
-        public async Task<IActionResult> SendEmailToResetPassword( string email)
+        public async Task<IActionResult> SendEmailToResetPassword(EmailMV emailMV)
         {
-            var result = await _account.SendEmailToResetPassword( email);
+            var result = await _account.SendEmailToResetPassword(emailMV.Email);
             return Ok(result);
         }
 
         [AllowAnonymous]
         [Route("api/account/ConfirmCodeResetPassword")]
         [HttpPost]
-        public IActionResult ConfirmCodeResetPassword(string email, int code)
+        public IActionResult ConfirmCodeResetPassword(ConfirmCodeResetPasswordMV confirmMV)
         {
-            var result = _account.ConfirmCodeResetPassword(email, code);
+            var result = _account.ConfirmCodeResetPassword(confirmMV.Email, confirmMV.code);
             return Ok(result);
         }
 
         [AllowAnonymous]
         [Route("api/account/ResetPassword")]
         [HttpPost]
-        public IActionResult ResetPassword(string email, ResetPasswordMV resetPasswordMV)
+        public IActionResult ResetPassword( ResetPasswordMV resetPasswordMV)
         {
-            var result = _account.ResetPassword(email, resetPasswordMV);
+            var result = _account.ResetPassword( resetPasswordMV);
             return Ok(result);
         }
 

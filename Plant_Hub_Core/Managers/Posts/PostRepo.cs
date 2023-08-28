@@ -46,6 +46,14 @@ namespace Plant_Hub_Core.Managers.Posts
                     };
 
             }
+
+
+        public List<Post> GetAllPosts()
+        {
+            var posts = _dbContext.Posts.ToList();
+            return posts;
+
+        }
             public ResponseApi GetAllPost(String userId)
             {
                 var posts =_dbContext.Posts.Select(x => new
@@ -163,9 +171,9 @@ namespace Plant_Hub_Core.Managers.Posts
                 };
             }
 
-            public ResponseApi UpdatePostById(int postId, PostMV post)
+            public ResponseApi UpdatePostById( PostMV post)
             {
-                var existPost = _dbContext.Posts.Find(postId);
+                var existPost = _dbContext.Posts.Find(post.PostId);
                 if (existPost == null)
                 {
                     return new ResponseApi
@@ -205,7 +213,8 @@ namespace Plant_Hub_Core.Managers.Posts
                     };
                 }
                 _dbContext.Posts.Remove(existPost);
-                return new ResponseApi
+            _dbContext.SaveChanges();
+            return new ResponseApi
                 {
                     IsSuccess = true,
                     Message = "successfully",

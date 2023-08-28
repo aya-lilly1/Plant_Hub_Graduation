@@ -10,6 +10,7 @@ namespace Plant_Hub_ModelView
 {
     public class PostMV
     {
+        public int PostId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public IFormFile ImageFile { get; set; }

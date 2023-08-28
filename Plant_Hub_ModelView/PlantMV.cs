@@ -10,6 +10,7 @@ namespace Plant_Hub_ModelView
 {
     public class PlantMV
     {
+        public int PlantId { get; set; }
         public string PlantName { get; set; }
 
         [MaxLength(500)]

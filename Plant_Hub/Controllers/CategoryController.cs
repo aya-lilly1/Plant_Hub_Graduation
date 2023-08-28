@@ -18,9 +18,9 @@ namespace Plant_Hub.Controllers
        
         [Route("api/Category/CreateCategory")]
         [HttpPost]
-        public IActionResult CreateCategoty([FromForm]CategoryMV category)
+        public async Task<IActionResult> CreateCategoty([FromForm] CreateCategoryMV category)
         {
-            var res = _catregory.CreateCategoty(category);
+            var res =await _catregory.CreateCategoty(category);
             return Ok(res);
         }
 
@@ -44,9 +44,9 @@ namespace Plant_Hub.Controllers
 
         [Route("api/Category/UpdateCategoty")]
         [HttpPost]
-        public IActionResult UpdateCategoty( int categoryId,[FromForm] CategoryMV category)
+        public IActionResult UpdateCategoty( [FromForm] CategoryMV category)
         {
-            var res = _catregory.UpdateCategoryById(categoryId, category);
+            var res = _catregory.UpdateCategoryById( category);
             return Ok(res);
         }
 

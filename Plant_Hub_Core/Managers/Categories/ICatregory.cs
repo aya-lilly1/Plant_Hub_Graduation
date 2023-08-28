@@ -9,10 +9,10 @@ namespace Plant_Hub_Core.Managers.Categories
 {
     public interface ICatregory
     {
-        ResponseApi CreateCategoty(CategoryMV category);
+        Task<ResponseApi> CreateCategoty(CreateCategoryMV category);
         ResponseApi GetAllCategories();
         ResponseApi GetCategoryById(int categortId);
-        ResponseApi UpdateCategoryById(int categortId, CategoryMV category);
+        ResponseApi UpdateCategoryById( CategoryMV category);
         ResponseApi DeleteCategoryById(int categortId);
 
 

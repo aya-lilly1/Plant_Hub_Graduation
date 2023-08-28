@@ -21,7 +21,7 @@ namespace Plant_Hub.Controllers
 
         [Route("api/Plant/CreatePlant")]
         [HttpPost]
-        public IActionResult CreatePlant([FromForm] PlantMV plant)
+        public IActionResult CreatePlant([FromForm] CreatePlantMV plant)
         {
             var res = _plant.CreatePlant(plant);
             return Ok(res);
@@ -56,9 +56,9 @@ namespace Plant_Hub.Controllers
 
         [Route("api/Plant/UpdatePlant")]
         [HttpPost]
-        public IActionResult UpdatePlantById(int plantId, [FromForm] PlantMV plant)
+        public IActionResult UpdatePlantById([FromForm] PlantMV plant)
         {
-            var res = _plant.UpdatePlantById(plantId, plant);
+            var res = _plant.UpdatePlantById( plant);
             return Ok(res);
         }
 
