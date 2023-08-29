@@ -12,7 +12,7 @@ namespace Plant_Hub_Core.Managers.Posts
     {
         ResponseApi CreatePost(string userId, PostMV post);
         ResponseApi GetAllPost(String userId);
-        ResponseApi GetPostById(int postId);
+        ResponseApi GetPostById(int postId, String userId);
         ResponseApi GetAllPostByUserId(string userId);
         ResponseApi UpdatePostById( PostMV post);
         ResponseApi DeletePostById(int PostId);

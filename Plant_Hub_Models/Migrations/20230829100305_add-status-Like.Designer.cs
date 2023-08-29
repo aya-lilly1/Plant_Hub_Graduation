@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Plant_Hub_Models.Models;
 
@@ -11,9 +12,10 @@ using Plant_Hub_Models.Models;
 namespace Plant_Hub_Models.Migrations
 {
     [DbContext(typeof(Plant_Hub_dbContext))]
-    partial class Plant_Hub_dbContextModelSnapshot : ModelSnapshot
+    [Migration("20230829100305_add-status-Like")]
+    partial class addstatusLike
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

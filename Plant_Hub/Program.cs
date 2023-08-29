@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Plant_Hub_ModelView;
 using Plant_Hub_Core.Managers.Posts;
 using GoogleTranslateFreeApi;
+using Plant_Hub_Core.Managers.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +77,7 @@ builder.Services.AddScoped<IAccount, Account>();
 builder.Services.AddScoped<ICatregory, CategoryRepo>();
 builder.Services.AddScoped<IPlant, PlantRepo>();
 builder.Services.AddScoped<IPost, PostRepo>();
+builder.Services.AddScoped<IUser, UserRepo>();
 builder.Services.AddScoped<IFileManagement, RepoFile>();
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
 

@@ -56,7 +56,7 @@ namespace Plant_Hub.Controllers
         [HttpGet]
         public IActionResult GetPostById(int postId)
         {
-            var res = _post.GetPostById(postId);
+            var res = _post.GetPostById(postId,_UserId);
             return Ok(res);
         }
 
@@ -85,7 +85,7 @@ namespace Plant_Hub.Controllers
         }
         [Route("api/Post/AddLike")]
         [HttpPost]
-        public IActionResult LikePostByUsre(int postid)
+        public IActionResult LikePostByUsre([FromBody]int postid)
         {
             var res = _post.LikePostByUsre(_UserId, postid);
             return Ok(res);

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Plant_Hub_Core.Managers.Categories;
 using Plant_Hub_Core.Managers.Plants;
+using Plant_Hub_Core.Managers.Users;
 using Plant_Hub_Models.Models;
 using Plant_Hub_ModelView;
 
@@ -30,28 +31,35 @@ namespace Plant_Hub.Controllers
         [AllowAnonymous]
         [Route("api/Plant/GetAllPlants")]
         [HttpGet]
-        public IActionResult GetAllPlants()
+        public IActionResult GetAllPlants(int langId)
         {
-            var res = _plant.GetAllPlants(_UserId);
+            var res = _plant.GetAllPlants(_UserId,langId);
             return Ok(res);
         }
 
         [AllowAnonymous]
         [Route("api/Plant/GetPlantById")]
         [HttpGet]
-        public IActionResult GetPlantById(int plantId)
+        public IActionResult GetPlantById(int plantId, int langId)
         {
-            var res = _plant.GetPlantById(plantId);
+            var res = _plant.GetPlantById(plantId, langId);
             return Ok(res);
         }
 
         [AllowAnonymous]
         [Route("api/Plant/GetPlanstByCategoryId")]
         [HttpGet]
-        public IActionResult GetPlantsByCategoryId(int categoryId)
+        public IActionResult GetPlantsByCategoryId(int categoryId, int langId)
         {
-            var res = _plant.GetPlantByCategoryId(categoryId);
+            var res = _plant.GetPlantByCategoryId(categoryId, langId);
             return Ok(res);
+        }
+        [Route("api/Plant/SearchForPlants")]
+        [HttpGet]
+        public IActionResult SearchForPlants(String PlantName, int CategoryId, int langId)
+        {
+            var result = _plant.SearchForPlants(PlantName, CategoryId,langId, _UserId);
+            return Ok(result);
         }
 
         [Route("api/Plant/UpdatePlant")]
@@ -64,9 +72,9 @@ namespace Plant_Hub.Controllers
 
         [Route("api/Plant/DeletePlant")]
         [HttpDelete]
-        public IActionResult DeletePlantById(int categoryId)
+        public IActionResult DeletePlantById(int plantId)
         {
-            var res = _plant.DeletePlantById(categoryId);
+            var res = _plant.DeletePlantById(plantId);
             return Ok(res);
         }
     }

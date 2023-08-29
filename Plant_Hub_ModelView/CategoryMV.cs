@@ -12,7 +12,9 @@ namespace Plant_Hub_ModelView
     {
         public int CategoryId { get; set; }
         public String CategoryName { get; set; }
+        public String CategoryNameAr { get; set; }
         public String Description { get; set; }
+        public String DescriptionAr{ get; set; }
         public IFormFile ImageFile { get; set; }
     }
 }

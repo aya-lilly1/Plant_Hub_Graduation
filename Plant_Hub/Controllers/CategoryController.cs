@@ -27,19 +27,26 @@ namespace Plant_Hub.Controllers
         [AllowAnonymous]
         [Route("api/Category/GetAllCategories")]
         [HttpGet]
-        public IActionResult GetAllCategories()
+        public IActionResult GetAllCategories(int langId)
         {
-            var res = _catregory.GetAllCategories();
+            var res = _catregory.GetAllCategories( langId);
             return Ok(res);
         }
 
         [AllowAnonymous]
         [Route("api/Category/GetCategoryById")]
         [HttpGet]
-        public IActionResult GetCategoryById(int categoryId)
+        public IActionResult GetCategoryById(int categoryId, int langId)
         {
-            var res = _catregory.GetCategoryById(categoryId);
+            var res = _catregory.GetCategoryById(categoryId, langId);
             return Ok(res);
+        }
+        [Route("api/Category/SearchForCategory")]
+        [HttpGet]
+        public IActionResult SearchForCategory(string categoryName, int langId)
+        {
+            var result = _catregory.SearchForCategory(categoryName, langId);
+            return Ok(result);
         }
 
         [Route("api/Category/UpdateCategoty")]

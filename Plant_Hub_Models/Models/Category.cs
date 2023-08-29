@@ -11,9 +11,12 @@ namespace Plant_Hub_Models.Models
     {
         public int Id { get; set; }
         public String CategoryName { get; set; }
+        public String CategoryNameAr { get; set; }
         [MaxLength (500)]
         public String Description { get; set; }
+        [MaxLength(500)]
+        public String DescriptionAr { get; set; }
         [MaxLength(800)]
         public String  Image{ get; set; }
-}
+    }
 }

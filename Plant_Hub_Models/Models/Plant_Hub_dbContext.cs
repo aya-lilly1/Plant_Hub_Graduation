@@ -19,23 +19,66 @@ namespace Plant_Hub_Models.Models
         {
             base.OnModelCreating(modelBuilder);
 
+            //modelBuilder.Entity<LikePost>()
+            //    .HasOne(lp => lp.Post)
+            //    .WithMany(p => p.LikePosts)
+            //    .HasForeignKey(lp => lp.PostId)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            //modelBuilder.Entity<Comment>()
+            //    .HasOne(c => c.Post)
+            //    .WithMany(p => p.Comments)
+            //    .HasForeignKey(c => c.PostId)
+            //    .OnDelete(DeleteBehavior.Restrict);
+
+
+            //modelBuilder.Entity<Comment>()
+            //     .HasOne(c => c.User)
+            //     .WithMany(u => u.Comments)
+            //     .HasForeignKey(c => c.UserId)
+            //     .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<LikePost>()
-                .HasOne(lp => lp.Post)
-                .WithMany(p => p.LikePosts)
-                .HasForeignKey(lp => lp.PostId)
-                .OnDelete(DeleteBehavior.Restrict);
+          .HasOne(lp => lp.Post)
+          .WithMany(p => p.LikePosts)
+          .HasForeignKey(lp => lp.PostId)
+          .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.Post)
                 .WithMany(p => p.Comments)
                 .HasForeignKey(c => c.PostId)
-                .OnDelete(DeleteBehavior.Restrict); // Change this to ReferentialAction.Restrict
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Comment>()
-                 .HasOne(c => c.User)
-                 .WithMany(u => u.Comments)
-                 .HasForeignKey(c => c.UserId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(c => c.User)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Plant>()
+                .HasMany(p => p.SavedPlants)
+                .WithOne(sp => sp.Plant)
+                .HasForeignKey(sp => sp.PlantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<SavePlant>()
+                .HasOne(sp => sp.User)
+                .WithMany(u => u.SavedPlants)
+                .HasForeignKey(sp => sp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.LikePosts)
+                .WithOne(lp => lp.User)
+                .HasForeignKey(lp => lp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Apply DeleteBehavior.Restrict to avoid multiple cascade paths
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Post)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(c => c.PostId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         public DbSet<Category> Categories { get; set; }

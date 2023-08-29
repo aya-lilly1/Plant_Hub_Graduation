@@ -7,6 +7,7 @@ using Plant_Hub_Models.Models;
 using Plant_Hub_ModelView;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Plant_Hub_Core.Managers.Categories
 
             public async Task<ResponseApi> CreateCategoty(CreateCategoryMV category)
             {
-                var existCat = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName);
+                var existCat = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName ||x.CategoryNameAr == category.CategoryNameAr );
                 if (existCat != null)
                 {
                     return new ResponseApi
@@ -51,6 +52,8 @@ namespace Plant_Hub_Core.Managers.Categories
                 {
                     CategoryName = category.CategoryName,
                     Description = category.Description,
+                    CategoryNameAr = category.CategoryNameAr,
+                    DescriptionAr = category.DescriptionAr,
                     Image = imageURL
                 };
                 _dbContext.Categories.Add(newCategory);
@@ -65,10 +68,16 @@ namespace Plant_Hub_Core.Managers.Categories
 
             }
 
-            public ResponseApi GetAllCategories( )
-            {
-                var categories = _dbContext.Categories.ToList();
-                if ( !categories.Any() )
+            public ResponseApi GetAllCategories(int langId)
+        {
+            
+                var localizedCategories = _dbContext.Categories.Select(s => new
+                {
+                    Id = s.Id,
+                    CategoryName = langId == 1 ? s.CategoryName : s.CategoryNameAr,
+                    Description = langId == 1 ? s.Description : s.DescriptionAr
+                }).ToList();
+                if (!localizedCategories.Any())
                 {
                     return new ResponseApi
                     {
@@ -78,17 +87,19 @@ namespace Plant_Hub_Core.Managers.Categories
                     };
 
                 }
-              
+
                 return new ResponseApi
                 {
                     IsSuccess = true,
                     Message = "successfully",
-                    Data = categories
+                    Data = localizedCategories
                 };
+            
 
+          
+        }
 
-            }
-            public ResponseApi GetCategoryById(int categortId)
+            public ResponseApi GetCategoryById(int categortId, int langId)
             {
                 var category = _dbContext.Categories.Find(categortId);
                 if(category == null)
@@ -100,52 +111,91 @@ namespace Plant_Hub_Core.Managers.Categories
                         Data = null
                     };
                 }
-                return new ResponseApi
+               
+                    return new ResponseApi
+                    {
+                        IsSuccess = true,
+                        Message = "successfully",
+                        Data = new
+                        {
+                            Id = category.Id,
+                            CategoryName = langId == 1 ? category.CategoryName : category.CategoryNameAr,
+                            Description = langId == 1 ? category.Description : category.DescriptionAr
+                        }
+                    };
+               
+                 
+            }
+
+            public ResponseApi SearchForCategory(String categoryName, int langId)
+            {
+                var matchingCategory = _dbContext.Categories.Where(u => u.CategoryName.Contains(categoryName) || u.CategoryNameAr.Contains(categoryName)).ToList();
+                if (!matchingCategory.Any())
+                {
+                    return new ResponseApi()
+                    {
+                        IsSuccess = true,
+                        Message = "No Data Available",
+                        Data = null
+                    };
+                }
+                var localizedCategories = matchingCategory.Select(category => new
+                {
+                    Id = category.Id,
+                    CategoryName = langId == 1 ? category.CategoryName : category.CategoryNameAr,
+                    Description = langId == 1 ? category.Description : category.DescriptionAr
+                }).ToList();
+
+            return new ResponseApi()
                 {
                     IsSuccess = true,
-                    Message = "successfully",
-                    Data = category
-                };
+                    Message = "Successfully",
+                    Data = localizedCategories
+
+            };
+            
             }
             public ResponseApi UpdateCategoryById( CategoryMV category)
-            {
-                var existCategory = _dbContext.Categories.Find(category.CategoryId);
-                if (existCategory == null)
                 {
+                    var existCategory = _dbContext.Categories.Find(category.CategoryId);
+                    if (existCategory == null)
+                    {
+                        return new ResponseApi
+                        {
+                            IsSuccess = false,
+                            Message = "No data available",
+                            Data = null
+                        };
+
+                    }
+                    var CheackCatName = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName || x.CategoryNameAr == category.CategoryNameAr);
+                    if (CheackCatName != null)
+                    {
+                        return new ResponseApi
+                        {
+                            IsSuccess = false,
+                            Message = "Category name already exists",
+                            Data = null
+                        };
+                    }
+
+                    string imageURL = "Uploads/CategoryImage/";
+                    //string imageURL = UploadImage(folder, category.ImageFile);
+
+                    existCategory.CategoryName = category.CategoryName;
+                    existCategory.Description = category.Description;
+                    existCategory.CategoryNameAr = category.CategoryNameAr;
+                    existCategory.DescriptionAr = category.DescriptionAr;
+                    existCategory.Image = imageURL;
+
+                    _dbContext.SaveChanges();
+
                     return new ResponseApi
                     {
-                        IsSuccess = false,
-                        Message = "No data available",
-                        Data = null
+                        IsSuccess = true,
+                        Message = "successfully",
+                        Data = existCategory
                     };
-
-                }
-                var CheackCatName = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName);
-                if (CheackCatName != null)
-                {
-                    return new ResponseApi
-                    {
-                        IsSuccess = false,
-                        Message = "Category name already exists",
-                        Data = null
-                    };
-                }
-
-                string imageURL = "Uploads/CategoryImage/";
-                //string imageURL = UploadImage(folder, category.ImageFile);
-
-                existCategory.CategoryName = category.CategoryName;
-                existCategory.Description = category.Description;
-                existCategory.Image = imageURL;
-
-                _dbContext.SaveChanges();
-
-                return new ResponseApi
-                {
-                    IsSuccess = true,
-                    Message = "successfully",
-                    Data = existCategory
-                };
 
             }
 

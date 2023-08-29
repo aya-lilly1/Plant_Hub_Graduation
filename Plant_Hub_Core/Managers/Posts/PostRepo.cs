@@ -65,7 +65,8 @@ namespace Plant_Hub_Core.Managers.Posts
                                                     PostTitel = x.Title,
                                                     PostContent = x.Content,
                                                     PostImage = x.Image,
-                                                    IsLiked = x.LikePosts.Any(x => x.UserId == userId),
+                                                    IsLiked = x.LikePosts.Any(x => x.UserId == userId) ? x.LikePosts.FirstOrDefault(s => s.UserId == userId).status : false,
+                                                    LikeCount = x.LikePosts.Count(p => p.status == true),
                                                     Comments = x.Comments.Select(comment => new
                                                           {
                                                             CommentId = comment.Id,
@@ -94,7 +95,7 @@ namespace Plant_Hub_Core.Managers.Posts
                 };
             }
 
-            public ResponseApi GetPostById(int postId)
+            public ResponseApi GetPostById(int postId, String userId)
             {
                 var posts = _dbContext.Posts.Where(x => x.Id == postId).Select(x => new
                 {
@@ -105,6 +106,8 @@ namespace Plant_Hub_Core.Managers.Posts
                     PostTitel = x.Title,
                     PostContent = x.Content,
                     PostImage = x.Image,
+                    IsLiked = x.LikePosts.Any(x => x.UserId == userId) ? x.LikePosts.FirstOrDefault(s => s.UserId == userId).status : false,
+                    LikeCount = x.LikePosts.Count(p => p.status == true),
                     Comments = x.Comments.Select(comment => new
                     {
                         CommentId = comment.Id,
@@ -254,22 +257,55 @@ namespace Plant_Hub_Core.Managers.Posts
             }
 
             //Like Post
-            public ResponseApi LikePostByUsre(string userId, int PostId)
+            public ResponseApi LikePostByUsre(string userId, int postId)
             {
-                var info = new LikePost
-                {
-                    PostId = PostId,
-                    UserId = userId
-                };
-                _dbContext.LikePosts.Add(info);
-                _dbContext.SaveChanges();
+            
+                var cheakIfExist = _dbContext.LikePosts.FirstOrDefault(x => x.UserId == userId && x.PostId == postId);
 
-                return new ResponseApi
+                if (cheakIfExist == null)
                 {
-                    IsSuccess = true,
-                    Message = "successfully",
-                    Data = null
-                };
+
+
+                    var info = new LikePost
+                    {
+                        PostId = postId,
+                        UserId = userId
+                    };
+                    _dbContext.LikePosts.Add(info);
+                    _dbContext.SaveChanges();
+
+                    return new ResponseApi
+                    {
+                        IsSuccess = true,
+                        Message = "successfully Like",
+                        Data = null
+                    };
+                }
+                else
+                {
+                    if (cheakIfExist.status == true)
+                    {
+                        cheakIfExist.status = false;
+                        _dbContext.SaveChanges();
+                        return new ResponseApi
+                        {
+                            IsSuccess = true,
+                            Message = "Successfully Unlike",
+                            Data = null
+                        };
+                    }
+                    else
+                    {
+                        cheakIfExist.status = true;
+                        _dbContext.SaveChanges();
+                        return new ResponseApi
+                        {
+                            IsSuccess = true,
+                            Message = "Successfully like",
+                            Data = null
+                        };
+                    }
+                }
             }
 
             public ResponseApi Deletelike(string userId, int PostId)

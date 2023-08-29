@@ -19,7 +19,7 @@ namespace Plant_Hub.Controllers
 
         [Route("api/SavePlant/SaveNewPlant")]
         [HttpPost]
-        public IActionResult SavePlant(int plantId)
+        public IActionResult SavePlant([FromBody]int plantId)
         {
             var res = _plant.SavePlant(_UserId, plantId);
             return Ok(res);
@@ -27,14 +27,21 @@ namespace Plant_Hub.Controllers
 
         [Route("api/SavePlant/GetPreservedPlants")]
         [HttpGet]
-        public IActionResult GetPreservedPlants()
+        public IActionResult GetPreservedPlants(int langId)
         {
-            var res = _plant.GetPreservedPlants(_UserId);
+            var res = _plant.GetPreservedPlants(_UserId, langId);
+            return Ok(res);
+        }
+        [Route("api/SavePlant/SearchForPreservedPlants")]
+        [HttpGet]
+        public IActionResult SearchForPreservedPlants(string plantName , int langId)
+        {
+            var res = _plant.SearchForPreservedPlants(plantName,_UserId,langId);
             return Ok(res);
         }
         [Route("api/SavePlant/DeletePreservedPlant")]
         [HttpDelete]
-        public IActionResult DeletePreservedPlant(int idToControl)
+        public IActionResult DeletePreservedPlant([FromBody] int idToControl)
         {
             var res = _plant.DeletePreservedPlant( idToControl);
             return Ok(res);
@@ -42,7 +49,7 @@ namespace Plant_Hub.Controllers
 
         [Route("api/SavePlant/RemovePreservedPlant")]
         [HttpDelete]
-        public IActionResult RemovePreservedPlant(int PlantId)
+        public IActionResult RemovePreservedPlant([FromBody] int PlantId)
         {
             var res = _plant.RemovePreservedPlant(_UserId, PlantId);
             return Ok(res);

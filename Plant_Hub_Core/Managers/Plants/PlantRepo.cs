@@ -8,6 +8,7 @@ using Plant_Hub_ModelView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,12 +48,17 @@ namespace Plant_Hub_Core.Managers.Plants
                 var newPlant = new Plant
                 {
                     PlantName = plant.PlantName,
+                    PlantNameAr = plant.PlantNameAr,
                     Description = plant.Description,
+                    DescriptionAr = plant.DescriptionAr,
                     Image = imageURL,
                     CategoryId = plant.CategoryId,
                     CareDetails = plant.CareDetails,
+                    CareDetailsAr = plant.CareDetailsAr,
                     Season = plant.Season,
-                    MedicalBenefit = plant.MedicalBenefit
+                    SeasonAr = plant.SeasonAr,
+                    MedicalBenefit = plant.MedicalBenefit,
+                    MedicalBenefitAr = plant.MedicalBenefitAr
                 };
                 _dbContext.Plants.Add(newPlant);
                 _dbContext.SaveChanges();
@@ -66,19 +72,19 @@ namespace Plant_Hub_Core.Managers.Plants
 
             }
 
-            public ResponseApi GetAllPlants(string userId)
+            public ResponseApi GetAllPlants(string userId , int langId)
             {
                 var plants = _dbContext.Plants.Select(x => new {
                                                             plantId = x.Id,
-                                                            PlantName = x.PlantName,
-                                                            PlantDescription = x.Description,
-                                                            PlantSeason = x.Season,
-                                                            PlantCareDetails = x.CareDetails,
-                                                            PlantMedicalBenefit = x.MedicalBenefit,
-                                                            PlantCategory = x.Category.CategoryName,
+                                                            PlantName = langId == 1 ? x.PlantName : x.PlantNameAr,
+                                                            PlantDescription = langId == 1 ? x.Description : x.DescriptionAr,
+                                                            PlantSeason = langId == 1 ? x.Season : x.SeasonAr,
+                                                            PlantCareDetails = langId == 1 ? x.CareDetails : x.CareDetailsAr,
+                                                            PlantMedicalBenefit = langId == 1 ? x.MedicalBenefit : x.MedicalBenefitAr,
+                                                            PlantCategory = langId == 1 ? x.Category.CategoryName : x.Category.CategoryNameAr,
                                                             PlantImage = x.Image,
-                                                            IsSaved = x.SavedPlants.Any(s => s.UserId == userId)
-                                                 }).ToList();
+                                                            IsSaved = x.SavedPlants.Any(s => s.UserId == userId) ? x.SavedPlants.FirstOrDefault(s => s.UserId == userId).status : false
+                }).ToList();
                 if (!plants.Any())
                 {
                     return new ResponseApi
@@ -89,7 +95,7 @@ namespace Plant_Hub_Core.Managers.Plants
                     };
 
                 }
-
+            
                 return new ResponseApi
                 {
                     IsSuccess = true,
@@ -99,7 +105,7 @@ namespace Plant_Hub_Core.Managers.Plants
 
 
             }
-            public ResponseApi GetPlantById(int plantId)
+            public ResponseApi GetPlantById(int plantId , int langId)
             {
                 var plant = _dbContext.Plants.Find(plantId);
                 if (plant == null)
@@ -114,13 +120,13 @@ namespace Plant_Hub_Core.Managers.Plants
                 var plantInfo = _dbContext.Plants.Select(x => new
                                                                 {
                                                                     PlantId = x.Id,
-                                                                    PlantName = x.PlantName,
-                                                                    PlantDescription = x.Description,
-                                                                    PlantSeason = x.Season,
-                                                                    PlantCareDetails = x.CareDetails,
-                                                                    PlantMedicalBenefit = x.MedicalBenefit,
-                                                                    PlantCategory = x.Category.CategoryName,
-                                                                    PlantImage = x.Image
+                                                                    PlantName = langId == 1 ? x.PlantName : x.PlantNameAr,
+                                                                    PlantDescription = langId == 1 ? x.Description : x.DescriptionAr,
+                                                                    PlantSeason = langId == 1 ? x.Season : x.SeasonAr,
+                                                                    PlantCareDetails = langId == 1 ? x.CareDetails : x.CareDetailsAr,
+                                                                    PlantMedicalBenefit = langId == 1 ? x.MedicalBenefit : x.MedicalBenefitAr,
+                                                                    PlantCategory = langId == 1 ? x.Category.CategoryName : x.Category.CategoryNameAr,
+                    PlantImage = x.Image
                                                                 }).FirstOrDefault(z => z.PlantId == plantId);
                 return new ResponseApi
                 {
@@ -130,7 +136,7 @@ namespace Plant_Hub_Core.Managers.Plants
                 };
             }
 
-            public ResponseApi GetPlantByCategoryId(int categoryId)
+            public ResponseApi GetPlantByCategoryId(int categoryId, int langId)
             {
                 var plant = _dbContext.Plants.ToList();
                 if (!plant.Any() )
@@ -145,12 +151,12 @@ namespace Plant_Hub_Core.Managers.Plants
                 var plants = _dbContext.Plants.Where(x =>x.CategoryId == categoryId).Select(x => new
                 {
                     PlantId = x.Id,
-                    PlantName = x.PlantName,
-                    PlantDescription = x.Description,
-                    PlantSeason = x.Season,
-                    PlantCareDetails = x.CareDetails,
-                    PlantMedicalBenefit = x.MedicalBenefit,
-                    PlantCategory = x.Category.CategoryName,
+                    PlantName = langId == 1 ? x.PlantName : x.PlantNameAr,
+                    PlantDescription = langId == 1 ? x.Description : x.DescriptionAr,
+                    PlantSeason = langId == 1 ? x.Season : x.SeasonAr,
+                    PlantCareDetails = langId == 1 ? x.CareDetails : x.CareDetailsAr,
+                    PlantMedicalBenefit = langId == 1 ? x.MedicalBenefit : x.MedicalBenefitAr,
+                    PlantCategory = langId == 1 ? x.Category.CategoryName : x.Category.CategoryNameAr,
                     PlantImage = x.Image
                 }).ToList();
                 return new ResponseApi
@@ -161,7 +167,35 @@ namespace Plant_Hub_Core.Managers.Plants
                 };
             }
 
-
+           public ResponseApi SearchForPlants(String PlantName, int CategoryId, int langId, String userId )
+            {
+                var matchingUPlants= _dbContext.Plants.Where(u =>( u.PlantName.Contains(PlantName) || u.PlantNameAr.Contains(PlantName)) && u.CategoryId == CategoryId).Select(x => new {
+                    plantId = x.Id,
+                    PlantName = langId == 1 ? x.PlantName : x.PlantNameAr,
+                    PlantDescription = langId == 1 ? x.Description : x.DescriptionAr,
+                    PlantSeason = langId == 1 ? x.Season : x.SeasonAr,
+                    PlantCareDetails = langId == 1 ? x.CareDetails : x.CareDetailsAr,
+                    PlantMedicalBenefit = langId == 1 ? x.MedicalBenefit : x.MedicalBenefitAr,
+                    PlantCategory = langId == 1 ? x.Category.CategoryName : x.Category.CategoryNameAr,
+                    PlantImage = x.Image,
+                    IsSaved = x.SavedPlants.Any(s => s.UserId == userId) ? x.SavedPlants.FirstOrDefault(s => s.UserId == userId).status : false
+                }).ToList();
+            if (!matchingUPlants.Any())
+                {
+                    return new ResponseApi()
+                    {
+                        IsSuccess = true,
+                        Message = "No Data Available",
+                        Data = null
+                    };
+                }
+                return new ResponseApi()
+                {
+                    IsSuccess = true,
+                    Message = "Successfully",
+                    Data = matchingUPlants
+                };
+            }
             public ResponseApi UpdatePlantById( PlantMV plant)
             {
                 var existPlant= _dbContext.Plants.Find(plant.PlantId);
@@ -231,37 +265,97 @@ namespace Plant_Hub_Core.Managers.Plants
             }
 
 
-            //Save Plant
+        //Save Plant
             public ResponseApi SavePlant(string userId, int plantId)
             {
-                var infoPlant = new SavePlant
-                {
-                    PlantId = plantId,
-                    UserId = userId
-                };
-                _dbContext.SavePlants.Add(infoPlant);
-                _dbContext.SaveChanges();
+                var cheakIfExist = _dbContext.SavePlants.FirstOrDefault(x => x.UserId == userId && x.PlantId == plantId);
 
-                return new ResponseApi
+                if (cheakIfExist == null)
+                {
+                    var infoPlant = new SavePlant
+                    {
+                        PlantId = plantId,
+                        UserId = userId,
+                        status = true
+                    };
+                    _dbContext.SavePlants.Add(infoPlant);
+                    _dbContext.SaveChanges();
+
+                    return new ResponseApi
+                    {
+                        IsSuccess = true,
+                        Message = "Successfully Saved",
+                        Data = null
+                    };
+                }
+                else
+                {
+                    if (cheakIfExist.status == true)
+                    {
+                        cheakIfExist.status = false;
+                        _dbContext.SaveChanges();
+                        return new ResponseApi
+                        {
+                            IsSuccess = true,
+                            Message = "Successfully Unsaved",
+                            Data = null
+                        };
+                    }
+                    else
+                    {
+                        cheakIfExist.status = true;
+                        _dbContext.SaveChanges();
+                        return new ResponseApi
+                        {
+                            IsSuccess = true,
+                            Message = "Successfully Saved",
+                            Data = null
+                        };
+                    }
+                }
+            }
+            public ResponseApi SearchForPreservedPlants(string plantName, String userId, int langId)
+            {
+                var matchingUPlants = _dbContext.SavePlants.Where(u => u.Plant.PlantName.Contains(plantName) || u.Plant.PlantNameAr.Contains(plantName)).Select(x => new {
+                    plantId = x.Plant.Id,
+                    PlantName = langId == 1 ? x.Plant.PlantName : x.Plant.PlantNameAr,
+                    PlantDescription = langId == 1 ? x.Plant.Description : x.Plant.DescriptionAr,
+                    PlantSeason = langId == 1 ? x.Plant.Season : x.Plant.SeasonAr,
+                    PlantCareDetails = langId == 1 ? x.Plant.CareDetails : x.Plant.CareDetailsAr,
+                    PlantMedicalBenefit = langId == 1 ? x.Plant.MedicalBenefit : x.Plant.MedicalBenefitAr,
+                    PlantCategory = langId == 1 ? x.Plant.Category.CategoryName : x.Plant.Category.CategoryNameAr,
+                    PlantImage = x.Plant.Image,
+                }).ToList();
+                if (!matchingUPlants.Any())
+                {
+                    return new ResponseApi()
+                    {
+                        IsSuccess = true,
+                        Message = "No Data Available",
+                        Data = null
+                    };
+                }
+                return new ResponseApi()
                 {
                     IsSuccess = true,
-                    Message = "successfully",
-                    Data = null
+                    Message = "Successfully",
+                    Data = matchingUPlants
                 };
             }
 
-            public ResponseApi GetPreservedPlants(string userId)
+
+        public ResponseApi GetPreservedPlants(string userId, int langId)
             {
-                var Plants = _dbContext.SavePlants.Where(x => x.UserId == userId)
+                var Plants = _dbContext.SavePlants.Where(x => x.UserId == userId && x.status == true)
                                                 .Select(x => new {
                                                                         IdToControl = x.Id,
                                                                         plantId = x.Plant.Id,
-                                                                        PlantName = x.Plant.PlantName,
-                                                                        PlantDescription =x.Plant.Description,
-                                                                        PlantSeason = x.Plant.Season,
-                                                                        PlantCareDetails = x.Plant.CareDetails,
-                                                                        PlantMedicalBenefit = x.Plant.MedicalBenefit,
-                                                                        PlantCategory = x.Plant.Category.CategoryName,
+                                                                        PlantName = langId == 1 ? x.Plant.PlantName : x.Plant.PlantNameAr,
+                                                                        PlantDescription = langId == 1 ? x.Plant.Description : x.Plant.DescriptionAr,
+                                                                        PlantSeason = langId == 1 ? x.Plant.Season : x.Plant.SeasonAr,
+                                                                        PlantCareDetails = langId == 1 ? x.Plant.CareDetails : x.Plant.CareDetailsAr,
+                                                                        PlantMedicalBenefit = langId == 1 ? x.Plant.MedicalBenefit : x.Plant.MedicalBenefitAr,
+                                                                        PlantCategory = langId == 1 ? x.Plant.Category.CategoryName : x.Plant.Category.CategoryNameAr,
                                                                         PlantImage = x.Plant.Image
                                                 }).ToList();
                 if (!Plants.Any())

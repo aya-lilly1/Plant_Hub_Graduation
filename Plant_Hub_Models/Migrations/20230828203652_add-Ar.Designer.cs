@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Plant_Hub_Models.Models;
 
@@ -11,9 +12,10 @@ using Plant_Hub_Models.Models;
 namespace Plant_Hub_Models.Migrations
 {
     [DbContext(typeof(Plant_Hub_dbContext))]
-    partial class Plant_Hub_dbContextModelSnapshot : ModelSnapshot
+    [Migration("20230828203652_add-Ar")]
+    partial class addAr
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,9 +318,6 @@ namespace Plant_Hub_Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("status")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
@@ -451,9 +450,6 @@ namespace Plant_Hub_Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("status")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PlantId");
@@ -525,7 +521,7 @@ namespace Plant_Hub_Models.Migrations
                     b.HasOne("Plant_Hub_Models.Models.ApplicationUser", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Post");
