@@ -13,6 +13,7 @@ namespace Plant_Hub_Core.Managers.Users
         ResponseApi GetAllUser();
         ResponseApi SearchForUser(String name);
         ResponseApi UpdateTypeOfUser(UpdateUserType updateUser);
-        ResponseApi DeleteUser(string userId);
+        ResponseApi LockUserAccount(LockAccountMV lockAccount);
+        ResponseApi UnlockUserAccount(LockAccountMV lockAccount);
     }
 }

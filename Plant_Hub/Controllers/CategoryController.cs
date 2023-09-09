@@ -41,6 +41,14 @@ namespace Plant_Hub.Controllers
             var res = _catregory.GetCategoryById(categoryId, langId);
             return Ok(res);
         }
+        [AllowAnonymous]
+        [Route("api/Category/GetCategoryWithOutlang")]
+        [HttpGet]
+        public IActionResult GetCategoryWithOutlang()
+        {
+            var res = _catregory.GetAllCategories();
+            return Ok(res);
+        }
         [Route("api/Category/SearchForCategory")]
         [HttpGet]
         public IActionResult SearchForCategory(string categoryName, int langId)
@@ -50,10 +58,10 @@ namespace Plant_Hub.Controllers
         }
 
         [Route("api/Category/UpdateCategoty")]
-        [HttpPost]
-        public IActionResult UpdateCategoty( [FromForm] CategoryMV category)
+        [HttpPut]
+        public async Task<IActionResult> UpdateCategoty( [FromForm] UpdateCategoryMV category)
         {
-            var res = _catregory.UpdateCategoryById( category);
+            var res = await _catregory.UpdateCategoryById( category);
             return Ok(res);
         }
 

@@ -138,27 +138,58 @@ namespace Plant_Hub_Core.Managers.Users
 
         }
 
-        public ResponseApi DeleteUser(string userId)
+        public ResponseApi LockUserAccount(LockAccountMV lockAccount)
         {
-            var user = _dbContext.Users.Find(userId);
+            var user = _dbContext.Users.Find(lockAccount.userId);
             if (user == null)
             {
                 return new ResponseApi()
                 {
-                    IsSuccess = true,
-                    Message = "Invaled Id",
+                    IsSuccess = false, 
+                    Message = "Invalid Id",
                     Data = null
                 };
             }
-            _dbContext.Users.Remove(user);
+
+            user.LockoutEnabled = true;
+            user.LockoutEnd = DateTimeOffset.MaxValue; 
+
             _dbContext.SaveChanges();
+
             return new ResponseApi()
             {
                 IsSuccess = true,
-                Message = "Successfully",
+                Message = "Successfully locked the user's account",
                 Data = null
             };
         }
+        public ResponseApi UnlockUserAccount(LockAccountMV lockAccount)
+        {
+            var user = _dbContext.Users.Find(lockAccount.userId);
+            if (user == null)
+            {
+                return new ResponseApi()
+                {
+                    IsSuccess = false, // Should be false since it's an error case
+                    Message = "Invalid Id",
+                    Data = null
+                };
+            }
+
+            user.LockoutEnabled = false; // Disable account locking
+            user.LockoutEnd = null; // Remove the lockout end date
+
+            _dbContext.SaveChanges();
+
+            return new ResponseApi()
+            {
+                IsSuccess = true,
+                Message = "Successfully unlocked the user's account",
+                Data = null
+            };
+        }
+
+
 
 
 

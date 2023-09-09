@@ -7,26 +7,62 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="GoogleTranslateFreeApi" Version="1.1.1" />
-	  <PackageReference Include="JumooTranslate" Version="1.4.1" />
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
-	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.21" />
-	  <!--<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.16" />-->
-	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.16" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.16">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	  <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
-	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.1" />
-	  <PackageReference Include="Unchase.Swashbuckle.AspNetCore.Extensions" Version="2.7.1" />
-	  <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
-	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-  
-   
+    <Compile Remove="wwwroot\ModelServices\ModelRepo\**" />
+    <Content Remove="wwwroot\ModelServices\ModelRepo\**" />
+    <EmbeddedResource Remove="wwwroot\ModelServices\ModelRepo\**" />
+    <None Remove="wwwroot\ModelServices\ModelRepo\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\ModelServices\AiModel\pd_model.pt" />
+    <Content Remove="wwwroot\ModelServices\Interpreter\python-3.11.5-amd64.exe" />
+    <Content Remove="wwwroot\ModelServices\IPythonScriptExcutor.cs" />
+    <Content Remove="wwwroot\ModelServices\PythonScriptExcutor.cs" />
+    <Content Remove="wwwroot\ModelServices\Scripts\MfccScrpit.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="wwwroot\ModelServices\IPythonScriptExcutor.cs" />
+    <Compile Include="wwwroot\ModelServices\PythonScriptExcutor.cs" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="GoogleTranslateFreeApi" Version="1.1.1" />
+		<PackageReference Include="JumooTranslate" Version="1.4.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.21" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.16">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<!--<PackageReference Include="Microsoft.Extensions.ML" Version="2.0.1" />
+		<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.15.1" />-->
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<!--<PackageReference Include="System.Drawing.Common" Version="7.0.0" />-->
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.1" />
+		<PackageReference Include="TorchVision" Version="0.100.4" />
+		<PackageReference Include="Unchase.Swashbuckle.AspNetCore.Extensions" Version="2.7.1" />
+		<PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<!--<PackageReference Include="Microsoft.ML" Version="3.0.0-preview.22621.2" />
+		<PackageReference Include="Microsoft.ML.TorchSharp" Version="0.21.0-preview.22621.2" />
+		<PackageReference Include="Microsoft.ML.OnnxTransformer" Version="1.5.0" />-->
+		<!-- Add this line -->
+
+	</ItemGroup>
+
+
+	<!--
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.ML" Version="3.0.0-preview.22621.2" />
+		<PackageReference Include="Microsoft.ML.TorchSharp" Version="0.21.0-preview.22621.2" />
+		<PackageReference Include="TorchSharp-cpu" Version="0.98.3" />
+		<PackageReference Include="TorchSharp" Version="0.99.6" />
+	</ItemGroup>-->
 
   <ItemGroup>
     <ProjectReference Include="..\Plant_Hub_Core\Plant_Hub_Core.csproj" />
@@ -39,6 +75,12 @@
     <Folder Include="wwwroot\Uploads\PlantImage\" />
     <Folder Include="wwwroot\Uploads\PostImage\" />
     <Folder Include="wwwroot\Uploads\UserImage\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\ModelServices\AiModel\pd_model.pt" />
+    <None Include="wwwroot\ModelServices\Interpreter\python-3.11.5-amd64.exe" />
+    <None Include="wwwroot\ModelServices\Scripts\MfccScrpit.py" />
   </ItemGroup>
 
 </Project>

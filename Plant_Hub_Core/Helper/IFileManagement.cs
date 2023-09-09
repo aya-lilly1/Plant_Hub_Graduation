@@ -13,6 +13,7 @@ namespace Plant_Hub_Core.Helper
         public Task<string> Upload(IFormFile fm, string TypeFile, string filename);
         public void DeleteFile(string OldFileName);
         public Task<string> UpdateImage(string oldfile, IFormFile newfile, string filename);
+        public Task Save(IFormFile fm, string FilePath);
     }
 
     public class RepoFile : IFileManagement
@@ -57,6 +58,16 @@ namespace Plant_Hub_Core.Helper
 
 
             return $"\\{TypeFile}\\{Foldername}\\{filename}";
+        }
+
+
+        public async Task Save(IFormFile fm, string filePath)
+        {
+            Stream fs = new FileStream(filePath, FileMode.Create);
+            await fm.CopyToAsync(fs);
+            await fs.FlushAsync();
+
+
         }
     }
 }

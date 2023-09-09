@@ -11,10 +11,15 @@ namespace Plant_Hub_Core.Managers.Plants
     {
         ResponseApi CreatePlant(CreatePlantMV plant);
         ResponseApi GetAllPlants(string userId, int langId);
+        ResponseApi GetAllPlants();
         ResponseApi GetPlantById(int plantId, int langId);
         ResponseApi GetPlantByCategoryId(int categoryId, int langId);
-        ResponseApi SearchForPlants(String PlantName, int CategoryId, int langId, String userId);
-        ResponseApi UpdatePlantById( PlantMV plant);
+        ResponseApi SearchForPlantsByCategory(String PlantName, int CategoryId, int langId, String userId);
+        ResponseApi SearchForPlants(String PlantName, int langId, String userId);
+        ResponseApi OrderToAddNewPlant(string userId, OrderAddNewPlantMV orderMv);
+        ResponseApi GetAllOrderToAddNewPlant();
+        ResponseApi DeleteOrderToAddNewPlant(int id);
+		ResponseApi UpdatePlantById(UpdatePlantMV plant);
         ResponseApi DeletePlantById(int plantId);
         ResponseApi SavePlant(string userId, int plantId);
         ResponseApi SearchForPreservedPlants(string plantName, String userId, int langId);

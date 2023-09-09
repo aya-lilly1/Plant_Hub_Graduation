@@ -16,6 +16,9 @@ using Plant_Hub_ModelView;
 using Plant_Hub_Core.Managers.Posts;
 using GoogleTranslateFreeApi;
 using Plant_Hub_Core.Managers.Users;
+using Plant_Hub;
+using Plant_Hub.ModelRepo;
+using Plant_Hub.ModelServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +44,7 @@ builder.Services.AddCors(options =>
                    .AllowAnyMethod();
         });
 });
+
 
 
 builder.Services.AddControllers();
@@ -79,8 +83,35 @@ builder.Services.AddScoped<IPlant, PlantRepo>();
 builder.Services.AddScoped<IPost, PostRepo>();
 builder.Services.AddScoped<IUser, UserRepo>();
 builder.Services.AddScoped<IFileManagement, RepoFile>();
+builder.Services.AddScoped<IModelRepos, ModelRepos>();
+builder.Services.AddScoped<IPythonScriptExcutor, PythonScriptExcutor> ();
+//builder.Services.AddScoped<ConsumePlantModel>();
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
+//builder.Services.AddSingleton(serviceProvider =>
+//{
+//    var mlContext = serviceProvider.GetRequiredService<MLContext>();
+//    var env = serviceProvider.GetRequiredService<IHostEnvironment>();
+//    var modelPath = Path.Combine(env.ContentRootPath, "ModelPlant", "Newmodel.onnx");
 
+//    var pipeline = mlContext.Transforms.ApplyOnnxModel(
+//        outputColumnName: "classLabel", // Updated output column name
+//        inputColumnName: nameof(ModelInput.Image),
+//        modelFile: modelPath);
+
+//    var model = pipeline.Fit(mlContext.Data.LoadFromEnumerable(new[] { new ModelInput() }));
+
+//    // Create the prediction engine here
+//    var predictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(model);
+
+//    return predictionEngine;
+//});
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddConsole(); // Add console logging
+    loggingBuilder.AddDebug();   // Add debug output logging
+                                 // You can add other logging providers here if needed
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

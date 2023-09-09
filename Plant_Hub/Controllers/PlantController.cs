@@ -38,6 +38,15 @@ namespace Plant_Hub.Controllers
         }
 
         [AllowAnonymous]
+        [Route("api/Plant/GetAllPlantsWithOutLang")]
+        [HttpGet]
+        public IActionResult GetAllPlantsWithOutLang()
+        {
+            var res = _plant.GetAllPlants();
+            return Ok(res);
+        }
+
+        [AllowAnonymous]
         [Route("api/Plant/GetPlantById")]
         [HttpGet]
         public IActionResult GetPlantById(int plantId, int langId)
@@ -54,17 +63,45 @@ namespace Plant_Hub.Controllers
             var res = _plant.GetPlantByCategoryId(categoryId, langId);
             return Ok(res);
         }
-        [Route("api/Plant/SearchForPlants")]
+        [Route("api/Plant/SearchForPlantsByCategory")]
         [HttpGet]
-        public IActionResult SearchForPlants(String PlantName, int CategoryId, int langId)
+        public IActionResult SearchForPlantsByCategory(String PlantName, int CategoryId, int langId)
         {
-            var result = _plant.SearchForPlants(PlantName, CategoryId,langId, _UserId);
+            var result = _plant.SearchForPlantsByCategory(PlantName, CategoryId,langId, _UserId);
             return Ok(result);
         }
+        [Route("api/Plant/SearchForPlants")]
+        [HttpGet]
+        public IActionResult SearchForPlants(String PlantName, int langId)
+        {
+            var result = _plant.SearchForPlants(PlantName, langId, _UserId);
+            return Ok(result);
+        }
+        [Route("api/Plant/OrderToAddNewPlant")]
+		[HttpPost]
+		public IActionResult OrderToAddNewPlant([FromBody] OrderAddNewPlantMV plant)
+		{
+			var res = _plant.OrderToAddNewPlant(_UserId,plant);
+			return Ok(res);
+		}
+		[Route("api/Plant/GetAllOrderToAddNewPlant")]
+		[HttpGet]
+		public IActionResult GetAllOrderToAddNewPlant()
+		{
+			var result = _plant.GetAllOrderToAddNewPlant();
+			return Ok(result);
+		}
+		[Route("api/Plant/DeleteOrderToAddNewPlant")]
+		[HttpDelete]
+		public IActionResult DeleteOrderToAddNewPlant(int id)
+		{
+			var res = _plant.DeleteOrderToAddNewPlant(id);
+			return Ok(res);
+		}
 
-        [Route("api/Plant/UpdatePlant")]
-        [HttpPost]
-        public IActionResult UpdatePlantById([FromForm] PlantMV plant)
+		[Route("api/Plant/UpdatePlant")]
+        [HttpPut]
+        public IActionResult UpdatePlantById([FromForm] UpdatePlantMV plant)
         {
             var res = _plant.UpdatePlantById( plant);
             return Ok(res);

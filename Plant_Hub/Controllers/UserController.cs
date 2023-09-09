@@ -48,11 +48,18 @@ namespace Plant_Hub.Controllers
             return Ok(result);
         }
 
-        [Route("api/user/DeleteUser")]
-        [HttpDelete]
-        public IActionResult DeleteUser(string userId)
+        [Route("api/user/LockUserAccount")]
+        [HttpPost]
+        public IActionResult LockUserAccount([FromBody] LockAccountMV lockAccount)
         {
-            var result = _user.DeleteUser(userId);
+            var result = _user.LockUserAccount( lockAccount);
+            return Ok(result);
+        }
+        [Route("api/user/UnlockUserAccount")]
+        [HttpPost]
+        public IActionResult UnlockUserAccount([FromBody] LockAccountMV lockAccount)
+        {
+            var result = _user.UnlockUserAccount( lockAccount);
             return Ok(result);
         }
     }

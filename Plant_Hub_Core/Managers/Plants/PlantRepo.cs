@@ -7,6 +7,7 @@ using Plant_Hub_Models.Models;
 using Plant_Hub_ModelView;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography.Xml;
@@ -32,13 +33,24 @@ namespace Plant_Hub_Core.Managers.Plants
 
             public ResponseApi CreatePlant(CreatePlantMV plant)
             {
-                var existPlant = _dbContext.Plants.FirstOrDefault(x => x.PlantName == plant.PlantName);
-                if (existPlant != null)
+                    var existPlantEn = _dbContext.Plants.FirstOrDefault(x => x.PlantName == plant.PlantName);
+                    if (existPlantEn != null)
+                    {
+                        return new ResponseApi
+                        {
+                            IsSuccess = false,
+                            Message = "plant English name already exists",
+                            Data = plant
+                        };
+
+                    }
+                var existPlantAr = _dbContext.Plants.FirstOrDefault(x => x.PlantNameAr == plant.PlantNameAr);
+                if (existPlantAr != null)
                 {
                     return new ResponseApi
                     {
                         IsSuccess = false,
-                        Message = "plant name already exists",
+                        Message = "plant Arabic name already exists",
                         Data = plant
                     };
 
@@ -105,6 +117,45 @@ namespace Plant_Hub_Core.Managers.Plants
 
 
             }
+            public ResponseApi GetAllPlants()
+            {
+                var plants = _dbContext.Plants.Select(x => new
+                {
+                    plantId = x.Id,
+                    PlantNameEn =  x.PlantName ,
+                    PlantNameAr = x.PlantNameAr,
+                    PlantDescriptionEn = x.Description,
+                    DescriptionAr = x.DescriptionAr,
+                    PlantSeasonEn = x.Season,
+                    PlantSeasonAr = x.SeasonAr,
+                    PlantCareDetailsEn =  x.CareDetails ,
+                    PlantCareDetailsAr =x.CareDetailsAr,
+                    PlantMedicalBenefiEntEn = x.MedicalBenefit,
+                    PlantMedicalBenefiEntAr = x.MedicalBenefitAr,
+                    PlantCategoryEn = x.Category.CategoryName,
+                    PlantCategoryAr = x.Category.CategoryNameAr,
+                    PlantImage = x.Image,
+                    
+                }).ToList();
+                if (!plants.Any())
+                {
+                    return new ResponseApi
+                    {
+                        IsSuccess = false,
+                        Message = "No data available",
+                        Data = null
+                    };
+
+                }
+
+                return new ResponseApi
+                {
+                    IsSuccess = true,
+                    Message = "successfully",
+                    Data = plants
+                };
+
+            }
             public ResponseApi GetPlantById(int plantId , int langId)
             {
                 var plant = _dbContext.Plants.Find(plantId);
@@ -167,7 +218,7 @@ namespace Plant_Hub_Core.Managers.Plants
                 };
             }
 
-           public ResponseApi SearchForPlants(String PlantName, int CategoryId, int langId, String userId )
+           public ResponseApi SearchForPlantsByCategory(String PlantName, int CategoryId, int langId, String userId )
             {
                 var matchingUPlants= _dbContext.Plants.Where(u =>( u.PlantName.Contains(PlantName) || u.PlantNameAr.Contains(PlantName)) && u.CategoryId == CategoryId).Select(x => new {
                     plantId = x.Id,
@@ -196,9 +247,107 @@ namespace Plant_Hub_Core.Managers.Plants
                     Data = matchingUPlants
                 };
             }
-            public ResponseApi UpdatePlantById( PlantMV plant)
+
+        public ResponseApi SearchForPlants(String PlantName,int langId, String userId)
+        {
+            var matchingUPlants = _dbContext.Plants.Where(u => (u.PlantName.Contains(PlantName) || u.PlantNameAr.Contains(PlantName))).Select(x => new {
+                plantId = x.Id,
+                PlantName = langId == 1 ? x.PlantName : x.PlantNameAr,
+                PlantDescription = langId == 1 ? x.Description : x.DescriptionAr,
+                PlantSeason = langId == 1 ? x.Season : x.SeasonAr,
+                PlantCareDetails = langId == 1 ? x.CareDetails : x.CareDetailsAr,
+                PlantMedicalBenefit = langId == 1 ? x.MedicalBenefit : x.MedicalBenefitAr,
+                PlantCategory = langId == 1 ? x.Category.CategoryName : x.Category.CategoryNameAr,
+                PlantImage = x.Image,
+                IsSaved = x.SavedPlants.Any(s => s.UserId == userId) ? x.SavedPlants.FirstOrDefault(s => s.UserId == userId).status : false
+            }).ToList();
+            if (!matchingUPlants.Any())
             {
-                var existPlant= _dbContext.Plants.Find(plant.PlantId);
+                return new ResponseApi()
+                {
+                    IsSuccess = true,
+                    Message = "No Data Available",
+                    Data = null
+                };
+            }
+            return new ResponseApi()
+            {
+                IsSuccess = true,
+                Message = "Successfully",
+                Data = matchingUPlants
+            };
+        }
+        public ResponseApi OrderToAddNewPlant(string userId,OrderAddNewPlantMV orderMv)
+        {
+            var order = new NewPlant
+            {
+                UserId = userId,
+                PlantName = orderMv.PlantName
+            };
+            _dbContext.NewPlants.Add(order);
+            _dbContext.SaveChanges();
+            return new ResponseApi
+            {
+                IsSuccess = true,
+                Message = "Success",
+                Data = null
+            };
+        }
+		public ResponseApi GetAllOrderToAddNewPlant()
+        {
+            var plant = _dbContext.NewPlants.Select(x => new
+            {
+                Id = x.Id,
+                PlantName = x.PlantName,
+                UserId = x.UserId,
+                UserName = x.User.UserName
+            }).ToList();
+
+
+			if (!plant.Any())
+			{
+				return new ResponseApi
+				{
+					IsSuccess = false,
+					Message = "No data available",
+					Data = null
+				};
+
+			}
+
+			return new ResponseApi
+			{
+				IsSuccess = true,
+				Message = "successfully",
+				Data = plant
+			};
+		}
+		public ResponseApi DeleteOrderToAddNewPlant(int id)
+		{
+            var existPlant = _dbContext.NewPlants.Find(id);
+            if (existPlant == null)
+            {
+				return new ResponseApi
+				{
+					IsSuccess = false,
+					Message = "Invalid Id",
+					Data = null
+				};
+			}
+            _dbContext.NewPlants.Remove(existPlant);
+            _dbContext.SaveChanges();
+			return new ResponseApi
+			{
+				IsSuccess = true,
+				Message = "successfully",
+				Data = null
+			};
+		}
+
+
+		public ResponseApi UpdatePlantById(UpdatePlantMV plant)
+            {
+                var existPlant= _dbContext.Plants.Find(plant.Id);
                 if (existPlant == null)
                 {
                     return new ResponseApi
@@ -209,8 +358,9 @@ namespace Plant_Hub_Core.Managers.Plants
                     };
 
                 }
-                var CheackPlantName = _dbContext.Plants.FirstOrDefault(x => x.PlantName == plant.PlantName);
-                if (CheackPlantName != null)
+                var CheackPlantName = _dbContext.Plants.FirstOrDefault(x =>( x.PlantName == plant.PlantName && x.Id != plant.Id)|| (x.PlantNameAr == plant.PlantNameAr && x.Id != plant.Id));
+
+            if (CheackPlantName != null)
                 {
                     return new ResponseApi
                     {
@@ -220,15 +370,26 @@ namespace Plant_Hub_Core.Managers.Plants
                     };
                 }
 
-                string folder = "Uploads/PlantImage/";
-                string imageURL = UploadImage(folder, plant.ImageFile);
+                //string folder = "Uploads/PlantImage/";
+                //string imageURL = UploadImage(folder, plant.ImageFile);
 
                 existPlant.PlantName = plant.PlantName;
+                existPlant.PlantNameAr = plant.PlantName;
+                existPlant.Description = plant.DescriptionAr;
                 existPlant.Description = plant.Description;
-                existPlant.Image = imageURL;
+
+                if (plant.ImageFile != null)
+                {
+                    string folder = "Uploads/PlantImage/";
+                    string imageURL = UploadImage(folder, plant.ImageFile);
+                    existPlant.Image = imageURL;
+                }
                 existPlant.CareDetails = plant.CareDetails;
+                existPlant.CareDetailsAr = plant.CareDetailsAr;
                 existPlant.Season = plant.Season;
+                existPlant.SeasonAr = plant.SeasonAr;
                 existPlant.MedicalBenefit = plant.MedicalBenefit;
+                existPlant.MedicalBenefitAr = plant.MedicalBenefitAr;
                 existPlant.CategoryId = plant.CategoryId;
 
                 _dbContext.SaveChanges();

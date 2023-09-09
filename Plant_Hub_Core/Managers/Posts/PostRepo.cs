@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Plant_Hub_Models.Models;
 using Plant_Hub_ModelView;
 using System;
@@ -67,6 +69,7 @@ namespace Plant_Hub_Core.Managers.Posts
                                                     PostImage = x.Image,
                                                     IsLiked = x.LikePosts.Any(x => x.UserId == userId) ? x.LikePosts.FirstOrDefault(s => s.UserId == userId).status : false,
                                                     LikeCount = x.LikePosts.Count(p => p.status == true),
+                                                    CommentCount = x.Comments.Count(),
                                                     Comments = x.Comments.Select(comment => new
                                                           {
                                                             CommentId = comment.Id,
@@ -108,6 +111,7 @@ namespace Plant_Hub_Core.Managers.Posts
                     PostImage = x.Image,
                     IsLiked = x.LikePosts.Any(x => x.UserId == userId) ? x.LikePosts.FirstOrDefault(s => s.UserId == userId).status : false,
                     LikeCount = x.LikePosts.Count(p => p.status == true),
+                    CommentCount = x.Comments.Count(c => c.PostId == postId),
                     Comments = x.Comments.Select(comment => new
                     {
                         CommentId = comment.Id,
@@ -146,6 +150,9 @@ namespace Plant_Hub_Core.Managers.Posts
                     PostTitel = x.Title,
                     PostContent = x.Content,
                     PostImage = x.Image,
+                    IsLiked = x.LikePosts.Any(x => x.UserId == userId) ? x.LikePosts.FirstOrDefault(s => s.UserId == userId).status : false,
+                    LikeCount = x.LikePosts.Count(p => p.status == true),
+                    CommentCount = x.Comments.Count(),
                     Comments = x.Comments.Select(comment => new
                     {
                         CommentId = comment.Id,
@@ -205,7 +212,7 @@ namespace Plant_Hub_Core.Managers.Posts
 
             public ResponseApi DeletePostById(int PostId)
             {
-                var existPost = _dbContext.Posts.Find(PostId);
+                var existPost = _dbContext.Posts.Include(p => p.Comments).FirstOrDefault( x =>x.Id == PostId);
                 if (existPost == null)
                 {
                     return new ResponseApi
@@ -215,14 +222,15 @@ namespace Plant_Hub_Core.Managers.Posts
                         Data = null
                     };
                 }
+                _dbContext.Comments.RemoveRange(existPost.Comments);
                 _dbContext.Posts.Remove(existPost);
-            _dbContext.SaveChanges();
-            return new ResponseApi
-                {
-                    IsSuccess = true,
-                    Message = "successfully",
-                    Data = null
-                };
+                _dbContext.SaveChanges();
+                return new ResponseApi
+                    {
+                        IsSuccess = true,
+                        Message = "successfully",
+                        Data = null
+                    };
             }
 
             //comment
@@ -269,7 +277,8 @@ namespace Plant_Hub_Core.Managers.Posts
                     var info = new LikePost
                     {
                         PostId = postId,
-                        UserId = userId
+                        UserId = userId,
+                        status = true
                     };
                     _dbContext.LikePosts.Add(info);
                     _dbContext.SaveChanges();

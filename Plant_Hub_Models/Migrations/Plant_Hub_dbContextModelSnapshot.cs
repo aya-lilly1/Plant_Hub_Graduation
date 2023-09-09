@@ -328,6 +328,29 @@ namespace Plant_Hub_Models.Migrations
                     b.ToTable("LikePosts");
                 });
 
+            modelBuilder.Entity("Plant_Hub_Models.Models.NewPlant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("PlantName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("NewPlants");
+                });
+
             modelBuilder.Entity("Plant_Hub_Models.Models.Plant", b =>
                 {
                     b.Property<int>("Id")
@@ -548,6 +571,17 @@ namespace Plant_Hub_Models.Migrations
                         .IsRequired();
 
                     b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Plant_Hub_Models.Models.NewPlant", b =>
+                {
+                    b.HasOne("Plant_Hub_Models.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

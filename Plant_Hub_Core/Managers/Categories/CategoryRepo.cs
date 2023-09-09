@@ -32,38 +32,50 @@ namespace Plant_Hub_Core.Managers.Categories
 
             public async Task<ResponseApi> CreateCategoty(CreateCategoryMV category)
             {
-                var existCat = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName ||x.CategoryNameAr == category.CategoryNameAr );
-                if (existCat != null)
+                var existCatEn = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName );
+                if (existCatEn != null)
                 {
                     return new ResponseApi
                     {
                         IsSuccess = false,
-                        Message = "category name already exists",
+                        Message = "category English name already exists",
+                        Data = category
+                    };
+
+                    }
+                var existCatAr = _dbContext.Categories.FirstOrDefault(x => x.CategoryNameAr == category.CategoryNameAr);
+
+                if (existCatAr != null)
+                {
+                    return new ResponseApi
+                    {
+                        IsSuccess = false,
+                        Message = "category Arabic name already exists",
                         Data = category
                     };
 
                 }
-            //    string folder = "/Uploads/CategoryImage/";
-            //string imageURL = UploadImage(folder, category.ImageFile);
+                //    string folder = "/Uploads/CategoryImage/";
+                //string imageURL = UploadImage(folder, category.ImageFile);
 
-            string imageURL = await _fileManagement.Upload(category.ImageFile, "Uploads", "Images");
+                string imageURL = await _fileManagement.Upload(category.ImageFile, "Uploads", "Images");
 
-            var newCategory = new Category
-                {
-                    CategoryName = category.CategoryName,
-                    Description = category.Description,
-                    CategoryNameAr = category.CategoryNameAr,
-                    DescriptionAr = category.DescriptionAr,
-                    Image = imageURL
-                };
-                _dbContext.Categories.Add(newCategory);
-                _dbContext.SaveChanges();
-                return new ResponseApi
-                {
-                    IsSuccess = true,
-                    Message = "successfully",
-                    Data = category
-                };
+                var newCategory = new Category
+                    {
+                        CategoryName = category.CategoryName,
+                        Description = category.Description,
+                        CategoryNameAr = category.CategoryNameAr,
+                        DescriptionAr = category.DescriptionAr,
+                        Image = imageURL
+                    };
+                    _dbContext.Categories.Add(newCategory);
+                    _dbContext.SaveChanges();
+                    return new ResponseApi
+                    {
+                        IsSuccess = true,
+                        Message = "successfully",
+                        Data = category
+                    };
 
 
             }
@@ -75,7 +87,8 @@ namespace Plant_Hub_Core.Managers.Categories
                 {
                     Id = s.Id,
                     CategoryName = langId == 1 ? s.CategoryName : s.CategoryNameAr,
-                    Description = langId == 1 ? s.Description : s.DescriptionAr
+                    Description = langId == 1 ? s.Description : s.DescriptionAr,
+                    image = s.Image
                 }).ToList();
                 if (!localizedCategories.Any())
                 {
@@ -97,7 +110,37 @@ namespace Plant_Hub_Core.Managers.Categories
             
 
           
-        }
+              }
+            public ResponseApi GetAllCategories()
+            {
+                var categories = _dbContext.Categories.Select(s => new
+                {
+                    Id = s.Id,
+                    CategoryName =  s.CategoryName,
+                    CategoryNameAr = s.CategoryNameAr,
+                    Description =  s.Description,
+                    DescriptionAr = s.DescriptionAr,
+                    image = s.Image
+                }).ToList();
+                if (!categories.Any())
+                {
+                    return new ResponseApi
+                    {
+                        IsSuccess = false,
+                        Message = "No data available",
+                        Data = null
+                    };
+
+                }
+
+                return new ResponseApi
+                {
+                    IsSuccess = true,
+                    Message = "successfully",
+                    Data = categories
+                };
+
+             }
 
             public ResponseApi GetCategoryById(int categortId, int langId)
             {
@@ -120,7 +163,8 @@ namespace Plant_Hub_Core.Managers.Categories
                         {
                             Id = category.Id,
                             CategoryName = langId == 1 ? category.CategoryName : category.CategoryNameAr,
-                            Description = langId == 1 ? category.Description : category.DescriptionAr
+                            Description = langId == 1 ? category.Description : category.DescriptionAr,
+                            image = category.Image
                         }
                     };
                
@@ -143,7 +187,8 @@ namespace Plant_Hub_Core.Managers.Categories
                 {
                     Id = category.Id,
                     CategoryName = langId == 1 ? category.CategoryName : category.CategoryNameAr,
-                    Description = langId == 1 ? category.Description : category.DescriptionAr
+                    Description = langId == 1 ? category.Description : category.DescriptionAr,
+                    image = category.Image
                 }).ToList();
 
             return new ResponseApi()
@@ -155,7 +200,7 @@ namespace Plant_Hub_Core.Managers.Categories
             };
             
             }
-            public ResponseApi UpdateCategoryById( CategoryMV category)
+            public async Task<ResponseApi> UpdateCategoryById(UpdateCategoryMV category)
                 {
                     var existCategory = _dbContext.Categories.Find(category.CategoryId);
                     if (existCategory == null)
@@ -168,9 +213,9 @@ namespace Plant_Hub_Core.Managers.Categories
                         };
 
                     }
-                    var CheackCatName = _dbContext.Categories.FirstOrDefault(x => x.CategoryName == category.CategoryName || x.CategoryNameAr == category.CategoryNameAr);
+                    var CheackCatName = _dbContext.Categories.FirstOrDefault(x =>( x.CategoryName == category.CategoryName && x.Id !=category.CategoryId) || (x.CategoryNameAr == category.CategoryNameAr && x.Id != category.CategoryId));
                     if (CheackCatName != null)
-                    {
+                    { 
                         return new ResponseApi
                         {
                             IsSuccess = false,
@@ -179,14 +224,18 @@ namespace Plant_Hub_Core.Managers.Categories
                         };
                     }
 
-                    string imageURL = "Uploads/CategoryImage/";
+                    //string imageURL = "Uploads/CategoryImage/";
                     //string imageURL = UploadImage(folder, category.ImageFile);
 
                     existCategory.CategoryName = category.CategoryName;
                     existCategory.Description = category.Description;
                     existCategory.CategoryNameAr = category.CategoryNameAr;
                     existCategory.DescriptionAr = category.DescriptionAr;
-                    existCategory.Image = imageURL;
+                    if (category.ImageFile != null)
+                    {
+                      string imageURL = await _fileManagement.Upload(category.ImageFile, "Uploads", "Images");
+                      existCategory.Image = imageURL;
+                    }
 
                     _dbContext.SaveChanges();
 

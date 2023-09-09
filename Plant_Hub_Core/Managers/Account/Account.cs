@@ -173,17 +173,25 @@ namespace Plant_Hub_Core.Managers.Account
 
                 if (existUser == null || !VerifyHashPassword(user.Password, existUser.PasswordHash))
                 {
-                    var response = new ResponseApi
-                    {
-                        IsSuccess = false,
-                        Message = "Invalid Email or password received",
-                        Data = null
-                    };
-                    return response;
-                }
-                else
+                return new ResponseApi
                 {
-                    var jwtSecurityToken = await CreateJwtToken(existUser);
+                    IsSuccess = false,
+                    Message = "Invalid Email or password received",
+                    Data = null
+                };
+            }
+            if (existUser.LockoutEnabled == true)
+            {
+                return new ResponseApi
+                {
+                    IsSuccess = false,
+                    Message = "Account is locked",
+                    Data = null
+                };
+            }
+
+
+            var jwtSecurityToken = await CreateJwtToken(existUser);
                     var result = _mapper.Map<LoginResponse>(existUser);
                     result.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
                     var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
@@ -207,7 +215,7 @@ namespace Plant_Hub_Core.Managers.Account
                         }
                     };
                     return response;
-                }
+                
             }
             public async Task<ResponseApi> SendEmailToResetPassword(string email)
             {
@@ -218,7 +226,7 @@ namespace Plant_Hub_Core.Managers.Account
                     var responseFaild = new ResponseApi
                     {
                         IsSuccess = false,
-                        Message = "Invalid Email",
+                        Message = "Email is not exist",
                         Data = null
                     };
                     return responseFaild;
@@ -248,7 +256,7 @@ namespace Plant_Hub_Core.Managers.Account
                     var responsefailed = new ResponseApi
                     {
                         IsSuccess = false,
-                        Message = "Invalid Email",
+                        Message = " Email is not exist",
                         Data = null
                     };
                     return responsefailed;
